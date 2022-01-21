@@ -1,22 +1,39 @@
-import "./styles/app.scss";
+import { useRef, useState } from "react";
+import Library from "./components/Library";
+import Nav from "./components/Nav";
 import Player from "./components/Player";
 import Song from "./components/Song";
+import "./styles/app.scss";
 import data from "./utils";
-import { useState } from "react";
-
 function App() {
   const [songs, setSongs] = useState(data());
   const [currentSong, setCurrentSong] = useState(songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [libraryStatus, setLibraryStatus] = useState(false);
+
+  // Ref
+  const audioRef = useRef(null);
 
   return (
     <div className="App">
-      <Song currentSong={currentSong}></Song>
+      <Nav libraryStatus={libraryStatus} setLibraryStatus={setLibraryStatus} />
+      <Song currentSong={currentSong} />
       <Player
         currentSong={currentSong}
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
-      ></Player>
+        audioRef={audioRef}
+      />
+      <Library
+        libraryStatus={libraryStatus}
+        currentSong={currentSong}
+        setCurrentSong={setCurrentSong}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        songs={songs}
+        audioRef={audioRef}
+        setSongs={setSongs}
+      />
     </div>
   );
 }
