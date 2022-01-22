@@ -7,7 +7,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 
-const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef }) => {
+const Player = ({
+  currentSong,
+  setCurrentSong,
+  isPlaying,
+  setIsPlaying,
+  audioRef,
+  songs,
+  setSongs,
+}) => {
   // State
   const [songInfo, setSongInfo] = useState({
     currentTime: 0,
@@ -36,6 +44,7 @@ const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef }) => {
     });
   };
 
+  // required to change the pause icon to play icon when audio ends
   useEffect(() => {
     if (songInfo.currentTime === songInfo.duration) {
       // playSongHandler();
@@ -50,6 +59,49 @@ const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef }) => {
     audioRef.current.currentTime = current;
   };
 
+  const skipTrackHandler = (direction) => {
+    let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
+    let nextIndex = 0;
+    console.log(currentIndex);
+    if (direction === "skip-back") {
+      nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : songs.length - 1;
+      setCurrentSong(songs[nextIndex]);
+    } else {
+      nextIndex = currentIndex + 1 >= songs.length ? 0 : currentIndex + 1;
+      setCurrentSong(songs[nextIndex]);
+    }
+    const newSongs = songs.map((s) => {
+      if (s.id === songs[nextIndex].id) {
+        return {
+          ...s,
+          active: true,
+        };
+      } else {
+        return {
+          ...s,
+          active: false,
+        };
+      }
+    });
+    setSongs(newSongs);
+
+    // catch is necessary beacuse when audio ends and if we change the track we face a error
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          audioRef.current.play();
+          setIsPlaying(true);
+        })
+
+        .catch(() => {
+          audioRef.current.play();
+          setIsPlaying(true);
+        });
+    }
+  };
+
+  // utility function
   const getTime = (time) => {
     return (
       Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2)
@@ -74,6 +126,7 @@ const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef }) => {
           className="skip-back"
           size="2x"
           icon={faAngleLeft}
+          onClick={() => skipTrackHandler("skip-back")}
         ></FontAwesomeIcon>
         <FontAwesomeIcon
           className="play"
@@ -85,6 +138,9 @@ const Player = ({ currentSong, isPlaying, setIsPlaying, audioRef }) => {
           className="skip-forward"
           size="2x"
           icon={faAngleRight}
+          onClick={() => {
+            skipTrackHandler("skip-forward");
+          }}
         ></FontAwesomeIcon>
       </div>
       <audio

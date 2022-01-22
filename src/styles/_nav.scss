@@ -5,13 +5,13 @@ nav {
   align-items: center;
   button {
     background: transparent;
-    border: 2px solid rgb(85, 85, 85);
+    border: 2px solid rgb(122, 122, 122);
     border-radius: 5px;
     cursor: pointer;
     padding: 0.5rem;
     transition: all 0.3s ease;
     &:hover {
-      background: rgb(85, 85, 85);
+      background: rgb(122, 122, 122);
       color: white;
     }
   }
