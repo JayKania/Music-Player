@@ -34,6 +34,7 @@ const Player = ({
       setIsPlaying(!isPlaying);
     }
   };
+
   const timeUpdateHandler = (event) => {
     const current = event.target.currentTime;
     const duration = event.target.duration;
@@ -71,7 +72,12 @@ const Player = ({
       nextIndex = currentIndex + 1 >= songs.length ? 0 : currentIndex + 1;
       await setCurrentSong(songs[nextIndex]);
     }
+    activeLibrarySongHandler(nextIndex);
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
 
+  const activeLibrarySongHandler = (nextIndex) => {
     const newSongs = songs.map((s) => {
       if (s.id === songs[nextIndex].id) {
         return {
@@ -85,10 +91,7 @@ const Player = ({
         };
       }
     });
-
-    await setSongs(newSongs);
-    audioRef.current.play();
-    setIsPlaying(true);
+    setSongs(newSongs);
   };
 
   const songEndHandler = () => {
