@@ -1,4 +1,5 @@
 import React from "react";
+import { playAudio } from "../utils";
 
 const LibrarySong = ({
   song,
@@ -12,8 +13,8 @@ const LibrarySong = ({
   audioRef,
 }) => {
   // Event Handlers
-  const songSelectHandler = () => {
-    setCurrentSong(song);
+  const songSelectHandler = async () => {
+    await setCurrentSong(song);
     const newSongs = songs.map((s) => {
       if (s.id === id) {
         return {
@@ -27,21 +28,10 @@ const LibrarySong = ({
         };
       }
     });
-    setSongs(newSongs);
-
-    // catch is necessary beacuse when audio ends and if we change the track we face a error
-    const playPromise = audioRef.current.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          audioRef.current.play();
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          audioRef.current.play();
-          setIsPlaying(true);
-        });
-    }
+    await setSongs(newSongs);
+    // playAudio(audioRef, setIsPlaying);
+    audioRef.current.play();
+    setIsPlaying(true);
   };
 
   return (

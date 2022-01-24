@@ -67,7 +67,7 @@ function chillHop() {
         "https://chillhop.com/wp-content/uploads/2021/11/3ff29a35be582c8dc0222273cb9c401ea6b209dc-1024x1024.jpg",
       artist: "Maydee",
       audio: "https://mp3.chillhop.com/serve.php/?mp3=27455",
-      color: ["#BBC8D8", "#817460"],
+      color: ["#5E2F2B", "#B0C2D8"],
       id: uuidv4(),
       active: false,
     },

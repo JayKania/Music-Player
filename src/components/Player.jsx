@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
+import { playAudio } from "../utils";
 
 const Player = ({
   currentSong,
@@ -20,6 +21,7 @@ const Player = ({
   const [songInfo, setSongInfo] = useState({
     currentTime: 0,
     duration: 0,
+    animationPercentage: 0,
   });
 
   // Event Handlers
@@ -32,25 +34,24 @@ const Player = ({
       setIsPlaying(!isPlaying);
     }
   };
-
   const timeUpdateHandler = (event) => {
     const current = event.target.currentTime;
     const duration = event.target.duration;
+
+    // calculate percenttage
+    const roundCurrent = Math.round(current);
+    const roundDuration = Math.round(duration);
+    const roundAnimationPerecentage = Math.round(
+      (roundCurrent / roundDuration) * 100
+    );
 
     setSongInfo({
       ...songInfo,
       currentTime: current,
       duration: duration,
+      animationPercentage: roundAnimationPerecentage,
     });
   };
-
-  // required to change the pause icon to play icon when audio ends
-  useEffect(() => {
-    if (songInfo.currentTime === songInfo.duration) {
-      // playSongHandler();
-      setIsPlaying(false);
-    }
-  }, [songInfo]);
 
   const dragHandler = (event) => {
     // console.log(event.target.value);
@@ -59,17 +60,18 @@ const Player = ({
     audioRef.current.currentTime = current;
   };
 
-  const skipTrackHandler = (direction) => {
+  const skipTrackHandler = async (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
     let nextIndex = 0;
-    console.log(currentIndex);
+
     if (direction === "skip-back") {
       nextIndex = currentIndex - 1 >= 0 ? currentIndex - 1 : songs.length - 1;
-      setCurrentSong(songs[nextIndex]);
+      await setCurrentSong(songs[nextIndex]);
     } else {
       nextIndex = currentIndex + 1 >= songs.length ? 0 : currentIndex + 1;
-      setCurrentSong(songs[nextIndex]);
+      await setCurrentSong(songs[nextIndex]);
     }
+
     const newSongs = songs.map((s) => {
       if (s.id === songs[nextIndex].id) {
         return {
@@ -83,22 +85,14 @@ const Player = ({
         };
       }
     });
-    setSongs(newSongs);
 
-    // catch is necessary beacuse when audio ends and if we change the track we face a error
-    const playPromise = audioRef.current.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          audioRef.current.play();
-          setIsPlaying(true);
-        })
+    await setSongs(newSongs);
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
 
-        .catch(() => {
-          audioRef.current.play();
-          setIsPlaying(true);
-        });
-    }
+  const songEndHandler = () => {
+    skipTrackHandler("skip-forward");
   };
 
   // utility function
@@ -112,14 +106,27 @@ const Player = ({
     <div className="player-container">
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <input
-          type="range"
-          min={0}
-          max={songInfo.duration || 0}
-          value={songInfo.currentTime}
-          onChange={dragHandler}
-        />
-        <p>{getTime(songInfo.duration)}</p>
+        <div
+          className="track"
+          style={{
+            background: `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]})`,
+          }}
+        >
+          <input
+            type="range"
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            onChange={dragHandler}
+          />
+          <div
+            className="animate-track"
+            style={{
+              transform: `translateX(${songInfo.animationPercentage}%)`,
+            }}
+          ></div>
+        </div>
+        <p>{songInfo.duration ? getTime(songInfo.duration) : "0:00"}</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon
@@ -148,6 +155,7 @@ const Player = ({
         onTimeUpdate={timeUpdateHandler}
         ref={audioRef}
         src={currentSong.audio}
+        onEnded={songEndHandler}
       ></audio>
     </div>
   );
