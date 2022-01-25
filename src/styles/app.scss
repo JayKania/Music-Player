@@ -2,6 +2,7 @@
 @import "./player";
 @import "./library";
 @import "./nav";
+@import "../index";
 
 * {
   margin: 0;
@@ -11,10 +12,21 @@
 
 .App {
   transition: all 0.5s ease;
+  height: 100vh;
+}
+
+.container {
+  transition: all 0.5s ease;
 }
 
 .library-active {
-  margin-left: 30%;
+  .container {
+    margin-left: 30%;
+  }
+}
+
+.dark-mode {
+  background-color: black;
 }
 
 body {

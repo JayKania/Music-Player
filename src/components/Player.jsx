@@ -5,17 +5,17 @@ import {
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
-import { playAudio } from "../utils";
+import React, { useState } from "react";
 
 const Player = ({
   currentSong,
   setCurrentSong,
   isPlaying,
   setIsPlaying,
-  audioRef,
   songs,
   setSongs,
+  audioRef,
+  darkModeStatus,
 }) => {
   // State
   const [songInfo, setSongInfo] = useState({
@@ -107,7 +107,11 @@ const Player = ({
 
   return (
     <div className="player-container">
-      <div className="time-control">
+      <div
+        className={`time-control ${
+          darkModeStatus ? "dark-mode-time-control" : "light-mode-time-control"
+        }`}
+      >
         <p>{getTime(songInfo.currentTime)}</p>
         <div
           className="track"
@@ -131,7 +135,11 @@ const Player = ({
         </div>
         <p>{songInfo.duration ? getTime(songInfo.duration) : "0:00"}</p>
       </div>
-      <div className="play-control">
+      <div
+        className={`play-control ${
+          darkModeStatus ? "dark-mode-play-control" : "light-mode-play-control"
+        }`}
+      >
         <FontAwesomeIcon
           className="skip-back"
           size="2x"

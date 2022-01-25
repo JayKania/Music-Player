@@ -10,32 +10,45 @@ function App() {
   const [currentSong, setCurrentSong] = useState(songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [libraryStatus, setLibraryStatus] = useState(false);
-
+  const [darkModeStatus, setDarkModeStatus] = useState(false);
   // Ref
   const audioRef = useRef(null);
   return (
-    <div className={`App ${libraryStatus ? "library-active" : ""}`}>
-      <Nav libraryStatus={libraryStatus} setLibraryStatus={setLibraryStatus} />
-      <Song currentSong={currentSong} />
-      <Player
-        songs={songs}
-        setSongs={setSongs}
-        currentSong={currentSong}
-        setCurrentSong={setCurrentSong}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        audioRef={audioRef}
-      />
-      <Library
-        libraryStatus={libraryStatus}
-        currentSong={currentSong}
-        setCurrentSong={setCurrentSong}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        songs={songs}
-        audioRef={audioRef}
-        setSongs={setSongs}
-      />
+    <div
+      className={`App ${libraryStatus ? "library-active " : ""}${
+        darkModeStatus ? "dark-mode" : "light-mode"
+      }`}
+    >
+      <div className="container">
+        <Nav
+          libraryStatus={libraryStatus}
+          setLibraryStatus={setLibraryStatus}
+          darkModeStatus={darkModeStatus}
+          setDarkModeStatus={setDarkModeStatus}
+        />
+        <Song currentSong={currentSong} darkModeStatus={darkModeStatus} />
+        <Player
+          songs={songs}
+          setSongs={setSongs}
+          currentSong={currentSong}
+          setCurrentSong={setCurrentSong}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          darkModeStatus={darkModeStatus}
+          audioRef={audioRef}
+        />
+        <Library
+          libraryStatus={libraryStatus}
+          currentSong={currentSong}
+          setCurrentSong={setCurrentSong}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          songs={songs}
+          setSongs={setSongs}
+          darkModeStatus={darkModeStatus}
+          audioRef={audioRef}
+        />
+      </div>
     </div>
   );
 }
