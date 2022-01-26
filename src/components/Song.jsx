@@ -4,7 +4,7 @@ const Song = ({ currentSong, darkModeStatus }) => {
   return (
     <div
       className={`song-container ${
-        darkModeStatus ? "dark-mode-song" : "ligh-mode-song"
+        darkModeStatus ? "dark-mode-song" : "light-mode-song"
       }`}
     >
       <img src={currentSong.cover} />
